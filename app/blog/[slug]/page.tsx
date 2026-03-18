@@ -18,8 +18,9 @@ function getPost(slug: string) {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const post = getPost(params.slug);
-  if (!post) return { title: 'Post not found' };
+  const { slug } = await params; // ✅ await first
+  const post = getPost(slug);
+  if (!post) return { title: "Post not found" };
   return {
     title: `${post.frontmatter.title} — Cap_Mojay{dev}`,
     description: post.frontmatter.excerpt,
@@ -29,7 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function BlogPost({ params }: Props) {
   const { slug } = await params;
   const post = getPost(slug);
-  
+
   if (!post) {
     return (
       <main
@@ -69,7 +70,7 @@ export default async function BlogPost({ params }: Props) {
         <div className="terminal-card mb-8">
           <div className="terminal-bar">
             <span className="t-dot" style={{ background: "var(--green)" }} />
-            <span>{params.slug}.mdx</span>
+            <span>{slug}.mdx</span>
           </div>
           <div className="p-6">
             <div

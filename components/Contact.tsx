@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import emailjs from "emailjs-com";
+import emailjs from "@emailjs/browser";
 
 // ── EmailJS credentials ──────────────────
 const EMAILJS_SERVICE = process.env.NEXT_PUBLIC_EMAILJS_SERVICE!;

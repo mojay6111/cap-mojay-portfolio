@@ -1,0 +1,82 @@
+---
+title: "Building a real-time ML pipeline with FastAPI and Redis"
+date: "2026-03-10"
+tag: "ML"
+mins: 8
+excerpt: "How to serve a trained ML model in production using FastAPI and Redis Streams."
+---
+
+# Building a real-time ML pipeline with FastAPI and Redis
+
+So you've trained a model. It scores 92% on your test set, your notebook is clean, and you're feeling good.
+Then someone asks: *"Can we use this in production?"*
+
+This post walks through how I serve ML models in real-world setups using **FastAPI** and **Redis Streams** —
+with queuing, retries, and basic monitoring included.
+
+## Why FastAPI?
+
+FastAPI is the sweet spot for ML serving:
+
+- **Fast** — async by default, built on Starlette
+- **Typed** — Pydantic models give you free validation
+- **Auto-docs** — `/docs` endpoint out of the box
+
+```python
+from fastapi import FastAPI
+from pydantic import BaseModel
+import joblib
+
+app = FastAPI()
+model = joblib.load("model.pkl")
+
+class PredictRequest(BaseModel):
+    features: list[float]
+
+@app.post("/predict")
+async def predict(req: PredictRequest):
+    prediction = model.predict([req.features])
+    return {"prediction": float(prediction[0])}
+```
+
+## Adding Redis for queuing
+
+For high-traffic scenarios, you don't want every request hitting your model synchronously.
+Redis Streams let you decouple ingestion from inference:
+
+```python
+import redis
+
+r = redis.Redis(host="localhost", port=6379)
+
+# Producer — push to stream
+r.xadd("predictions", {"features": str(features)})
+
+# Consumer — read and process
+entries = r.xread({"predictions": "$"}, block=0)
+```
+
+## Monitoring with basic metrics
+
+Track inference latency and error rates from day one:
+
+```python
+import time
+
+@app.post("/predict")
+async def predict(req: PredictRequest):
+    start = time.time()
+    prediction = model.predict([req.features])
+    latency = time.time() - start
+    print(f"Inference latency: {latency:.4f}s")
+    return {"prediction": float(prediction[0]), "latency_ms": round(latency * 1000, 2)}
+```
+
+## Wrapping up
+
+This pattern — **FastAPI + Redis + a trained model** — is surprisingly production-ready for most
+small-to-medium ML use cases. You get async handling, a queue buffer, and a clean API contract.
+
+Next step: containerise everything with Docker and deploy to a cloud VM. I'll cover that in the next post.
+
+> **George Edwin** · edwingeorge521@gmail.com · Nairobi, Kenya 🇰🇪

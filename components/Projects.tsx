@@ -22,7 +22,7 @@ const featuredProjects = [
     name: "primesense",
     title: "PrimeSense",
     description:
-      "A data science project — add your real description here. Update this in components/Projects.tsx.",
+      "NLP-powered sentiment analysis on Amazon Prime Video user reviews. Classifies reviews as **Positive**, **Neutral**, or **Negative** using classical ML models (SVM, Naive Bayes, Random Forest) and BERT.",
     github: "https://github.com/mojay6111/primesense",
     deploy: "https://primesense.onrender.com",
     platform: "render" as const,
@@ -35,7 +35,7 @@ const featuredProjects = [
     name: "retailers-ai-pricing",
     title: "Retailers AI Pricing",
     description:
-      "AI-powered dynamic pricing system for retail — add your real description here. Update in components/Projects.tsx.",
+      "A production-ready retail pricing intelligence system powered by machine learning.Analyses transaction history, estimates price elasticity per product, forecasts demand,and recommends optimal prices — all exposed via a FastAPI backend and React dashboard.",
     github: "https://github.com/mojay6111/Retailers_AI_-Pricing",
     deploy: "https://retailers-ai-pricing.vercel.app/",
     platform: "vercel" as const,

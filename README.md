@@ -123,7 +123,7 @@ Then add it to the posts array in both:
 git init
 git add .
 git commit -m "initial commit"
-git remote add origin https://github.com/YOUR_USERNAME/cap-mojay-portfolio.git
+git remote add origin https://github.com/mojay6111/cap-mojay-portfolio.git
 git push -u origin main
 
 # 2. Go to vercel.com → New Project → Import from GitHub

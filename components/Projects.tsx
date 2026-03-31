@@ -1,198 +1,375 @@
-'use client';
-import { useEffect, useRef } from 'react';
+"use client";
+import { useEffect, useRef } from "react";
+import Link from "next/link";
 
-const projects = [
+// ── Pull directly from deploy-overrides for the homepage preview ──
+// These 3 cards are shown on the homepage — add your real details here
+const featuredProjects = [
   {
-    file:   'nairobi_housing.py',
-    status: { label: '● active', color: 'var(--green)' },
-    name:   'Nairobi Housing Price Predictor',
-    desc:   'ML regression model that predicts real estate prices across Nairobi neighbourhoods using historical data, feature engineering, and a Streamlit dashboard for interactive exploration.',
-    tags:   [
-      { label: 'Python',      cls: 'tag-green'  },
-      { label: 'Scikit-learn', cls: 'tag-amber' },
-      { label: 'Pandas',      cls: 'tag-blue'   },
-      { label: 'Streamlit',   cls: 'tag-purple' },
-    ],
-    github: 'https://github.com/mojay6111',
-    demo:   '#',
+    name: "cap-mojay-portfolio",
+    title: "Cap_Mojay Portfolio",
+    description:
+      "Personal portfolio site built with Next.js 15, Tailwind CSS, Framer Motion and MDX blog. Terminal dark aesthetic.",
+    github: "https://github.com/mojay6111/cap-mojay-portfolio",
+    deploy: "https://cap-mojay-portfolio.vercel.app",
+    platform: "vercel" as const,
+    language: "TypeScript",
+    langColor: "#3178c6",
+    tags: ["Next.js", "Tailwind", "MDX", "Framer"],
+    status: "live",
   },
   {
-    file:   'sentiment_pipeline.py',
-    status: { label: '● complete', color: 'var(--blue)' },
-    name:   'Swahili Sentiment Analyser',
-    desc:   'NLP pipeline for classifying sentiment in Swahili social-media text using a fine-tuned transformer model. Includes a FastAPI endpoint and a simple React front-end.',
-    tags:   [
-      { label: 'Python',       cls: 'tag-green'  },
-      { label: 'HuggingFace',  cls: 'tag-amber'  },
-      { label: 'FastAPI',      cls: 'tag-blue'   },
-      { label: 'React',        cls: 'tag-purple' },
-    ],
-    github: 'https://github.com/mojay6111',
-    demo:   '#',
+    name: "primesense",
+    title: "PrimeSense",
+    description:
+      "A data science project — add your real description here. Update this in components/Projects.tsx.",
+    github: "https://github.com/mojay6111/primesense",
+    deploy: "https://primesense.onrender.com",
+    platform: "render" as const,
+    language: "Python",
+    langColor: "#3572A5",
+    tags: ["Python", "Data Science", "API"],
+    status: "live",
   },
   {
-    file:   'health_dashboard.js',
-    status: { label: '● building', color: 'var(--amber)' },
-    name:   'County Health Data Dashboard',
-    desc:   'Interactive analytics dashboard built for Kenyan county health data — charts, filters, KPI cards, and exportable CSV reports. Inspired by the Ministry of Health attachment.',
-    tags:   [
-      { label: 'Next.js',   cls: 'tag-green'  },
-      { label: 'D3.js',     cls: 'tag-blue'   },
-      { label: 'SQL',       cls: 'tag-amber'  },
-      { label: 'Tailwind',  cls: 'tag-purple' },
-    ],
-    github: 'https://github.com/mojay6111',
-    demo:   '#',
-  },
-  {
-    file:   'cbet_course_gen.py',
-    status: { label: '● complete', color: 'var(--blue)' },
-    name:   'CBET Lesson Plan Generator',
-    desc:   'Python tool that auto-generates CBET-aligned lesson plans from a topic input, drawing on competency frameworks. Built to speed up curriculum prep at teaching institutions.',
-    tags:   [
-      { label: 'Python',  cls: 'tag-green'  },
-      { label: 'OpenAI',  cls: 'tag-amber'  },
-      { label: 'Tkinter', cls: 'tag-blue'   },
-      { label: 'PDF',     cls: 'tag-purple' },
-    ],
-    github: 'https://github.com/mojay6111',
-    demo:   '#',
-  },
-  {
-    file:   'student_tracker.sql',
-    status: { label: '● complete', color: 'var(--blue)' },
-    name:   'Student Performance Tracker',
-    desc:   'SQL-powered student analytics system with a Python Flask UI — tracks grades, attendance, and learning outcomes across modules for ICT diploma classes.',
-    tags:   [
-      { label: 'Python',     cls: 'tag-green'  },
-      { label: 'SQL',        cls: 'tag-amber'  },
-      { label: 'Flask',      cls: 'tag-blue'   },
-      { label: 'Chart.js',   cls: 'tag-purple' },
-    ],
-    github: 'https://github.com/mojay6111',
-    demo:   '#',
-  },
-  {
-    file:   'portfolio_site.tsx',
-    status: { label: '● live', color: 'var(--green)' },
-    name:   'This Portfolio Site',
-    desc:   'Personal portfolio built with Next.js 15, Tailwind CSS, and Framer Motion. Features a terminal aesthetic, MDX blog, GitHub activity graph, and EmailJS contact form.',
-    tags:   [
-      { label: 'Next.js',  cls: 'tag-green'  },
-      { label: 'Tailwind', cls: 'tag-blue'   },
-      { label: 'Framer',   cls: 'tag-amber'  },
-      { label: 'MDX',      cls: 'tag-purple' },
-    ],
-    github: 'https://github.com/mojay6111',
-    demo:   'https://capmojay.vercel.app',
+    name: "retailers-ai-pricing",
+    title: "Retailers AI Pricing",
+    description:
+      "AI-powered dynamic pricing system for retail — add your real description here. Update in components/Projects.tsx.",
+    github: "https://github.com/mojay6111/Retailers_AI_-Pricing",
+    deploy: "https://retailers-ai-pricing.vercel.app/",
+    platform: "vercel" as const,
+    language: "Python",
+    langColor: "#3178c6",
+    tags: ["Python", "ML", "AI", "Pricing"],
+    status: "live",
   },
 ];
+
+const LANG_COLORS: Record<string, string> = {
+  TypeScript: "#3178c6",
+  JavaScript: "#f1e05a",
+  Python: "#3572A5",
+  HTML: "#e34c26",
+  CSS: "#563d7c",
+};
+
+function PlatformBadge({ platform }: { platform: "vercel" | "render" }) {
+  return platform === "vercel" ? (
+    <span
+      style={{
+        fontFamily: "Fira Code, monospace",
+        fontSize: "0.65rem",
+        color: "var(--text)",
+        background: "var(--bg3)",
+        border: "1px solid var(--border)",
+        borderRadius: "4px",
+        padding: "1px 7px",
+      }}
+    >
+      ▲ Vercel
+    </span>
+  ) : (
+    <span
+      style={{
+        fontFamily: "Fira Code, monospace",
+        fontSize: "0.65rem",
+        color: "var(--blue)",
+        background: "var(--bg3)",
+        border: "1px solid var(--border)",
+        borderRadius: "4px",
+        padding: "1px 7px",
+      }}
+    >
+      ⬡ Render
+    </span>
+  );
+}
 
 export default function Projects() {
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      entries => entries.forEach(e => e.target.classList.toggle('visible', e.isIntersecting)),
-      { threshold: 0.1 }
+      (entries) =>
+        entries.forEach((e) =>
+          e.target.classList.toggle("visible", e.isIntersecting),
+        ),
+      { threshold: 0.1 },
     );
-    sectionRef.current?.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    sectionRef.current
+      ?.querySelectorAll(".reveal")
+      .forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, []);
 
   return (
     <section id="projects" ref={sectionRef} className="relative z-10">
       <div className="section-wrap">
+        {/* Header */}
         <div className="section-header reveal">
           <span className="section-prompt">ls ./projects/ -la</span>
           <h2 className="section-title">Projects</h2>
           <div className="section-line" />
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {projects.map((p, i) => (
+        {/* Featured 3 cards */}
+        <div className="grid md:grid-cols-3 gap-5 mb-6">
+          {featuredProjects.map((p, i) => (
             <div
-              key={i}
-              className="project-card terminal-card reveal flex flex-col"
-              style={{ transitionDelay: `${i * 0.08}s` }}
+              key={p.name}
+              className="terminal-card reveal flex flex-col"
+              style={{
+                transitionDelay: `${i * 0.1}s`,
+                position: "relative",
+                transition:
+                  "transform 0.3s, border-color 0.3s, box-shadow 0.3s",
+              }}
+              onMouseEnter={(e) => {
+                const el = e.currentTarget as HTMLDivElement;
+                el.style.transform = "translateY(-5px)";
+                el.style.borderColor = "rgba(0,255,136,0.35)";
+                el.style.boxShadow =
+                  "0 8px 32px rgba(0,0,0,0.4), 0 0 20px rgba(0,255,136,0.06)";
+              }}
+              onMouseLeave={(e) => {
+                const el = e.currentTarget as HTMLDivElement;
+                el.style.transform = "translateY(0)";
+                el.style.borderColor = "var(--border)";
+                el.style.boxShadow = "none";
+              }}
             >
-              {/* Top bar */}
+              {/* Top accent line */}
               <div
-                className="terminal-bar flex justify-between"
-                style={{ fontSize: '0.75rem' }}
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: "2px",
+                  background: "var(--green)",
+                  transform: "scaleX(0)",
+                  transformOrigin: "left",
+                  transition: "transform 0.3s",
+                }}
+                className="card-accent"
+              />
+
+              {/* Terminal bar */}
+              <div
+                className="terminal-bar"
+                style={{ justifyContent: "space-between" }}
               >
-                <span>{p.file}</span>
-                <span style={{ color: p.status.color }}>{p.status.label}</span>
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "6px" }}
+                >
+                  <span
+                    className="t-dot"
+                    style={{ background: "var(--green)" }}
+                  />
+                  <span
+                    style={{
+                      fontFamily: "Fira Code, monospace",
+                      fontSize: "0.72rem",
+                    }}
+                  >
+                    {p.name}
+                  </span>
+                </div>
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "6px" }}
+                >
+                  <span
+                    style={{
+                      width: "6px",
+                      height: "6px",
+                      borderRadius: "50%",
+                      background: "var(--green)",
+                      boxShadow: "0 0 6px rgba(0,255,136,0.6)",
+                    }}
+                  />
+                  <span
+                    style={{
+                      fontFamily: "Fira Code, monospace",
+                      fontSize: "0.65rem",
+                      color: "var(--green)",
+                    }}
+                  >
+                    {p.status}
+                  </span>
+                </div>
               </div>
 
               {/* Body */}
-              <div className="p-5 flex flex-col flex-1">
-                <h3 className="font-mono font-bold text-sm mb-2">
-                  <span style={{ color: 'var(--green)' }}>// </span>
-                  <span style={{ color: 'var(--text)' }}>{p.name}</span>
+              <div
+                style={{
+                  padding: "1.2rem",
+                  display: "flex",
+                  flexDirection: "column",
+                  flex: 1,
+                  gap: "10px",
+                }}
+              >
+                {/* Title */}
+                <h3
+                  style={{
+                    fontFamily: "Fira Code, monospace",
+                    fontWeight: 700,
+                    fontSize: "0.9rem",
+                    color: "var(--text)",
+                    margin: 0,
+                  }}
+                >
+                  <span style={{ color: "var(--green)" }}>// </span>
+                  {p.title}
                 </h3>
-                <p className="font-mono text-xs leading-relaxed mb-4 flex-1" style={{ color: 'var(--muted)' }}>
-                  {p.desc}
+
+                {/* Description */}
+                <p
+                  style={{
+                    fontFamily: "Fira Code, monospace",
+                    fontSize: "0.76rem",
+                    color: "var(--muted)",
+                    lineHeight: 1.7,
+                    margin: 0,
+                    flex: 1,
+                  }}
+                >
+                  {p.description}
                 </p>
-                <div className="flex flex-wrap gap-1 mb-4">
-                  {p.tags.map(t => (
-                    <span key={t.label} className={`tag ${t.cls}`}>{t.label}</span>
+
+                {/* Tags */}
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "5px" }}>
+                  {p.tags.map((t) => (
+                    <span
+                      key={t}
+                      className="tag"
+                      style={{
+                        fontFamily: "Fira Code, monospace",
+                        fontSize: "0.65rem",
+                      }}
+                    >
+                      {t}
+                    </span>
                   ))}
                 </div>
-                <div className="flex gap-4 font-mono text-xs">
+
+                {/* Language + platform */}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <span
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "5px",
+                      fontFamily: "Fira Code, monospace",
+                      fontSize: "0.68rem",
+                      color: "var(--muted)",
+                    }}
+                  >
+                    <span
+                      style={{
+                        width: 10,
+                        height: 10,
+                        borderRadius: "50%",
+                        background: LANG_COLORS[p.language] ?? "#8b949e",
+                        display: "inline-block",
+                      }}
+                    />
+                    {p.language}
+                  </span>
+                  <PlatformBadge platform={p.platform} />
+                </div>
+
+                {/* Links */}
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "0.8rem",
+                    borderTop: "1px solid var(--border)",
+                    paddingTop: "10px",
+                    marginTop: "auto",
+                  }}
+                >
                   <a
                     href={p.github}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="transition-colors duration-200"
-                    style={{ color: 'var(--muted)' }}
-                    onMouseEnter={e => (e.currentTarget.style.color = 'var(--green)')}
-                    onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted)')}
+                    style={{
+                      fontFamily: "Fira Code, monospace",
+                      fontSize: "0.75rem",
+                      color: "var(--muted)",
+                      textDecoration: "none",
+                      transition: "color 0.2s",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "4px",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.color = "var(--green)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.color = "var(--muted)")
+                    }
                   >
                     ⌥ GitHub
                   </a>
                   <a
-                    href={p.demo}
+                    href={p.deploy}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="transition-colors duration-200"
-                    style={{ color: 'var(--muted)' }}
-                    onMouseEnter={e => (e.currentTarget.style.color = 'var(--blue)')}
-                    onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted)')}
+                    style={{
+                      fontFamily: "Fira Code, monospace",
+                      fontSize: "0.75rem",
+                      color:
+                        p.platform === "vercel" ? "var(--text)" : "var(--blue)",
+                      textDecoration: "none",
+                      transition: "color 0.2s",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "4px",
+                      marginLeft: "auto",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.color = "var(--green)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.color =
+                        p.platform === "vercel" ? "var(--text)" : "var(--blue)")
+                    }
                   >
-                    → Live Demo
+                    → Live Demo ↗
                   </a>
                 </div>
               </div>
 
-              {/* Hover accent bar */}
-              <style>{`
-                .project-card { position: relative; }
-                .project-card::before {
-                  content: '';
-                  position: absolute; top: 0; left: 0; right: 0; height: 2px;
-                  background: var(--green);
-                  transform: scaleX(0); transition: transform 0.3s;
-                  transform-origin: left;
-                }
-                .project-card:hover::before { transform: scaleX(1); }
-                .project-card:hover { transform: translateY(-4px); }
-              `}</style>
+              {/* Hover accent CSS */}
+              <style>{`.terminal-card:hover .card-accent { transform: scaleX(1) !important; }`}</style>
             </div>
           ))}
         </div>
 
-        {/* GitHub CTA */}
-        <div className="mt-6 text-center reveal" style={{ transitionDelay: '0.5s' }}>
-          <a
-            href="https://github.com/mojay6111"
-            target="_blank"
-            rel="noopener noreferrer"
+        {/* View all CTA */}
+        <div
+          className="reveal text-center"
+          style={{ transitionDelay: "0.35s" }}
+        >
+          <Link
+            href="/projects"
             className="btn btn-outline"
-            style={{ borderColor: 'var(--green)', color: 'var(--green)' }}
+            style={{
+              borderColor: "var(--green)",
+              color: "var(--green)",
+              display: "inline-flex",
+            }}
           >
-            ⌥ View all on GitHub
-          </a>
+            ⌥ view all projects on GitHub
+          </Link>
         </div>
       </div>
     </section>
